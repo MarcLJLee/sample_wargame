@@ -2,8 +2,8 @@ import numpy as np
 
 
 class Ground:
-    _width = 50
-    _height = 30
+    _width = 800
+    _height = 800
 
     _field = []
     _objects = []
@@ -30,9 +30,14 @@ class Ground:
                     my_location = obj.get_location().get("position")
                     enemy_location = enemy.get_location().get("position")
                     if my_location[0] == enemy_location[0] and my_location[1] == enemy_location[1]:
+                        if len(self._objects) < 5:
+                            print(f'{obj.get_name()} attacks {enemy.get_name()}')
                         if obj.attack(enemy):
                             self._objects.remove(enemy)
-                            print(f'#{self._frame} : {len(self._objects)} soldiers on field.')
+                            if len(self._objects) < 10:
+                                print(f'Rank #{len(self._objects) +1} : {enemy.soldier_str()}')
+                            if len(self._objects) % 50 == 0:
+                                print(f'#{self._frame} : {len(self._objects)} soldiers on field.')
 
         if self._frame % 300 == 0:
             print(f'#{self._frame} : {len(self._objects)} soldiers on field.')
@@ -41,6 +46,9 @@ class Ground:
 
     def add_object(self, soldier):
         self._objects.append(soldier)
+
+    def get_objects(self):
+        return self._objects
 
     def check_champ(self):
         if len(self._objects) == 1:

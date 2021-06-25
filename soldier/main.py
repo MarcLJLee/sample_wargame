@@ -7,17 +7,18 @@ _mainground = ground.Ground()
 _soldiers = []
 _faker = Faker()
 
-for i in range(0, 100):
+for i in range(0, 500):
     new_soldier = soldier.Soldier(_faker.name())
     new_soldier.set_ground(_mainground)
     _soldiers.append(new_soldier)
     _mainground.add_object(_soldiers[i])
 
 while True:
-    for soldier_data in _soldiers:
-        soldier_data.random_move()
+    objects = _mainground.get_objects()
+    for soldier_data in objects:
+        soldier_data.action(objects)
 
     _mainground.render()
     if _mainground.check_champ():
         break
-    time.sleep(0.1)
+    # time.sleep(0.1)
