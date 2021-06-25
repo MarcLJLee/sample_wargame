@@ -132,7 +132,7 @@ class Soldier:
         if self.has_skill('ChoSaiyan'):
             if self._speed > 150:
                 self._speed = 150
-        if self.has_skill('Saiyan'):
+        elif self.has_skill('Saiyan'):
             if self._speed > 80:
                 self._speed = 80
         elif self.has_skill('Chaser'):
