@@ -53,6 +53,7 @@ class Ground:
     def check_champ(self):
         if len(self._objects) == 1:
             print(f'champion comes {self._objects[0].soldier_str()}')
+            print(f'{self._objects[0].get_champ()}')
             return True
         else:
             return False
