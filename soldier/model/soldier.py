@@ -23,6 +23,16 @@ class Soldier:
 
     _skill = []
 
+    _initial_attribute = {
+        'maxhp': 1,
+        'attack': 1,
+        'capability': 1,
+        'speed': 1,
+        'sight': 1,
+        'skill': [],
+
+    }
+
     _killcount = 0
 
     def get_uid(self):
@@ -41,16 +51,23 @@ class Soldier:
     def exchamp(self, name, uid, attack, maxhp, sight, speed, capability, skill):
         self._name = name
         self._uid = uid
-        self._attack = round(attack/20)
-        self._maxhp = round(maxhp/20)
-        self._sight = round(sight/20)
-        self._speed = round(speed/10)
+        self._attack = attack
+        self._maxhp = maxhp
+        self._sight = sight
+        self._speed = speed
         self._capability = capability
         self._skill = skill
         self._skill.append('ExChamp')
 
         print(f'ex-champion on the ground : {self.soldier_str()}')
-
+        self._initial_attribute = {
+            'maxhp': self._maxhp,
+            'attack': self._attack,
+            'capability': self._capability,
+            'sight': self._sight,
+            'speed': self._speed,
+            'skill': self._skill.copy(),
+        }
 
     def set_skill(self, prob, skill_name):
         if random.randint(0, prob) > prob - 1:
@@ -79,6 +96,9 @@ class Soldier:
         self.set_skill(500, 'Master')
         self.set_skill(1000, 'Saiyan')
         self.set_skill(1000, 'Absorber')
+
+        if self._capability < 10:
+            self.set_skill(1000, 'SSHB')
 
         if self.has_skill('Newtype'):
             print(f'{self._name} is Newtype')
@@ -111,6 +131,21 @@ class Soldier:
 
         if self.has_skill('Absorber'):
             print(f'{self._name} is Absorber')
+
+        if self.has_skill('SSHB'):
+            print(f'{self._name} is SSHB')
+            self._maxhp = random.randint(100, 300)
+            self._sight = self._sight + random.randint(10, 30)
+            self._speed = self._speed + random.randint(10, 30)
+
+        self._initial_attribute = {
+            'maxhp': self._maxhp,
+            'attack': self._attack,
+            'capability': self._capability,
+            'sight': self._sight,
+            'speed': self._speed,
+            'skill': self._skill.copy(),
+        }
 
     def learn(self):
         # print(f'{self._name} getting stronger')
@@ -168,7 +203,7 @@ class Soldier:
 
     def attack(self, enemy):
         if self.has_skill('Absorber') and random.randint(0, 2) > 1:
-            print('Absorber acting')
+            print(f'{self._name} Absorber acting {enemy.get_name()}')
             self._attack = self._attack + random.randint(1, enemy.get_attack())
             self._maxhp = self._maxhp + random.randint(1, enemy.get_hp())
             self._sight = self._maxhp + random.randint(1, enemy.get_sight())
@@ -180,6 +215,11 @@ class Soldier:
 
         if self.has_skill('Newtype'):
             my_capability = self._capability + random.randint(0, 30)
+        elif self.has_skill('SSHB'):
+            my_capability = self._capability + random.randint(0, 100)
+            if random.randint(0, 1) > 0:
+                print(f'{self.get_name()} attack again!')
+                self.attack(enemy)
         else:
             my_capability = self._capability
 
@@ -190,7 +230,7 @@ class Soldier:
                 print(f'{self.soldier_str()}')
             return True
         else:
-            if enemy.has_skill('Master') and random.randint(0, 1) > 0:
+            if (enemy.has_skill('Master') or enemy.has_skill('SSHB')) and random.randint(0, 1) > 0:
                 print(f'{enemy.get_name()} returns to enemy')
                 enemy.attack(self)
 
@@ -349,4 +389,5 @@ class Soldier:
         return self._location
 
     def get_champ(self):
-        return f"'{self._name}', '{self._uid}', {self._attack}, {self._maxhp}, {self._sight}, {self._speed}, {self._capability}, {self._skill}"
+        return f"'{self._name}', '{self._uid}', {self._initial_attribute.get('attack')}, {self._initial_attribute.get('maxhp')}, {self._initial_attribute.get('sight')}, {self._initial_attribute.get('speed')}, {self._initial_attribute.get('capability')}, {self._initial_attribute['skill']}"
+        # return f"'{self._name}', '{self._uid}', {self._attack}, {self._maxhp}, {self._sight}, {self._speed}, {self._capability}, {self._skill}"
