@@ -17,6 +17,7 @@ class Soldier:
     _maxhp = 1
     _hp = 1
     _attack = 1
+    _capability = 1
     _speed = 1
     _sight = 1
 
@@ -37,13 +38,14 @@ class Soldier:
         self._skill = []
         self.init_attr()
 
-    def exchamp(self, name, uid, attack, maxhp, sight, speed, skill):
+    def exchamp(self, name, uid, attack, maxhp, sight, speed, capability, skill):
         self._name = name
         self._uid = uid
         self._attack = round(attack/20)
         self._maxhp = round(maxhp/20)
         self._sight = round(sight/20)
         self._speed = round(speed/10)
+        self._capability = capability
         self._skill = skill
         self._skill.append('ExChamp')
 
@@ -66,6 +68,7 @@ class Soldier:
         self._attack = random.randint(2, 3)
         self._speed = random.randint(1, 2)
         self._sight = random.randint(2, 5)
+        self._capability = random.randint(1, 90)
 
         self.set_skill(500, 'Newtype')
         self.set_skill(100, 'Gosu')
@@ -81,11 +84,13 @@ class Soldier:
             print(f'{self._name} is Newtype')
             self._sight = self._sight + random.randint(2, 5)
             self._speed = self._speed + random.randint(1, 2)
+            self._capability = random.randint(50, 100)
 
         if self.has_skill('Gosu'):
             print(f'{self._name} is Gosu')
             self._attack = random.randint(2, 3)
             self._maxhp = random.randint(5, 10)
+            self._capability = random.randint(40, 80)
 
         if self.has_skill('Luckyboy'):
             self._speed = self._speed + random.randint(3, 5)
@@ -95,12 +100,14 @@ class Soldier:
             self._maxhp = random.randint(50, 100)
             self._sight = self._sight + random.randint(10, 30)
             self._speed = self._speed + random.randint(10, 30)
+            self._capability = random.randint(50, 100)
 
         if self.has_skill('Saiyan'):
             print(f'{self._name} is Saiyan')
             self._maxhp = random.randint(50, 100)
             self._sight = self._sight + random.randint(10, 30)
             self._speed = self._speed + random.randint(20, 30)
+            self._capability = random.randint(40, 80)
 
         if self.has_skill('Absorber'):
             print(f'{self._name} is Absorber')
@@ -171,44 +178,40 @@ class Soldier:
                 if not self.has_skill(skill):
                     self._skill.append(skill)
 
-        if enemy.attacked(self._attack):
+        if self.has_skill('Newtype'):
+            my_capability = self._capability + random.randint(0, 30)
+        else:
+            my_capability = self._capability
+
+        if enemy.attacked(self._attack, my_capability):
             self.learn()
             self._killcount = self._killcount + 1
             if self._killcount > 10 and self._killcount % 10 == 0:
                 print(f'{self.soldier_str()}')
             return True
         else:
+            if enemy.has_skill('Master') and random.randint(0, 1) > 0:
+                print(f'{enemy.get_name()} returns to enemy')
+                enemy.attack(self)
+
             return False
 
-        if enemy.has_skill('Gosu') and random.randint(0, 1) > 0:
-            print(f'{enemy.get_name()} returns to enemy')
-            enemy.attack(self)
-
-    def attacked(self, attack):
-        if self.has_skill('Newtype'):
-            if random.randint(0, 100) < 70:
-                if random.randint(0, 20) > 19:
-                    # print(f'{self._name} getting stronger')
-                    self._attack = self._attack + random.randint(1, 2)
-                return False
-        elif self.has_skill('Gosu'):
-            if random.randint(0, 100) < 50:
-                if random.randint(0, 20) > 19:
-                    # print(f'{self._name} getting stronger')
-                    self._attack = self._attack + random.randint(1, 2)
-                return False
+    def attacked(self, attack, capability):
+        # 회피 Dice
+        if random.randint(0, self._capability + capability) > capability:
+            if random.randint(0, 20) > 19:
+                # print(f'{self._name} getting stronger')
+                self._attack = self._attack + random.randint(1, 2)
+            return False
         elif self.has_skill('Luckyboy'):
             if random.randint(0, 100) < 95:
                 if random.randint(0, 20) > 19:
                     # print(f'{self._name} getting stronger')
                     self._attack = self._attack + random.randint(1, 2)
                 return False
-        else:
-            if random.randint(0, 100) < 20:
-                if random.randint(0, 20) > 19:
-                    # print(f'{self._name} getting stronger')
-                    self._attack = self._attack + random.randint(1, 2)
-                return False
+
+        if random.randint(0, self._capability + capability) < round(capability / 2):
+            attack = attack * 2
 
         if self._hp < attack:
             # if len(self._skill) > 0 or self._killcount > 5:
@@ -268,7 +271,7 @@ class Soldier:
             self.learn()
 
     def soldier_str(self):
-        return f'soldier {self._name} ({self._uid}) kill: {self._killcount}, attck: {self._attack}, hp: {self._maxhp}, sight: {self._sight}, speed: {self._speed}, on {self._location.get("position")}, {self._skill}'
+        return f'soldier {self._name} ({self._uid}) kill: {self._killcount}, attck: {self._attack}, hp: {self._maxhp}, sight: {self._sight}, speed: {self._speed}, capability: {self._capability}, on {self._location.get("position")}, {self._skill}'
 
     def get_name(self):
         return f'{self._name}'
@@ -346,4 +349,4 @@ class Soldier:
         return self._location
 
     def get_champ(self):
-        return f"'{self._name}', '{self._uid}', {self._attack}, {self._maxhp}, {self._sight}, {self._speed}, {self._skill}"
+        return f"'{self._name}', '{self._uid}', {self._attack}, {self._maxhp}, {self._sight}, {self._speed}, {self._capability}, {self._skill}"

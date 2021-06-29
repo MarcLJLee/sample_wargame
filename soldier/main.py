@@ -9,7 +9,7 @@ _faker = Faker()
 
 # ex_champ
 ex_champ = soldier.Soldier('Exchamp')
-ex_champ.exchamp('Marcus Powers', '11173064-c759-4fe0-925a-f8205090b535', 2784, 2803, 475, 40, ['ChoSaiyan'])
+ex_champ.exchamp('Amanda Simpson', '66f4dc49-03fb-4d91-a9aa-ca73fc3a38f3', 566, 566, 448, 50, 20, ['Chaser'])
 ex_champ.set_ground(_mainground)
 
 _soldiers.append(ex_champ)
