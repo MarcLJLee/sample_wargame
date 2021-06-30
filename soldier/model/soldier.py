@@ -94,11 +94,8 @@ class Soldier:
         self.set_skill(300, 'Genius')
         self.set_skill(500, 'Luckyboy')
         self.set_skill(500, 'Master')
-        self.set_skill(1000, 'Saiyan')
+        self.set_skill(2000, 'Saiyan')
         self.set_skill(1000, 'Absorber')
-
-        if self._capability < 10:
-            self.set_skill(1000, 'SSHB')
 
         if self.has_skill('Newtype'):
             print(f'{self._name} is Newtype')
@@ -131,6 +128,9 @@ class Soldier:
 
         if self.has_skill('Absorber'):
             print(f'{self._name} is Absorber')
+
+        if self._capability < 10:
+            self.set_skill(1000, 'SSHB')
 
         if self.has_skill('SSHB'):
             print(f'{self._name} is SSHB')
@@ -249,6 +249,9 @@ class Soldier:
                     # print(f'{self._name} getting stronger')
                     self._attack = self._attack + random.randint(1, 2)
                 return False
+        elif self.has_skill('SSHB'):
+            if random.randint(0, 2) < 0:
+                attack = round(attack / 3)
 
         if random.randint(0, self._capability + capability) < round(capability / 2):
             attack = attack * 2
